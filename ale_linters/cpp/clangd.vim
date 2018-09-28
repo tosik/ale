@@ -2,10 +2,11 @@
 " Description: Clangd language server
 
 call ale#Set('cpp_clangd_executable', 'clangd')
-call ale#Set('cpp_clangd_options', '')
+call ale#Set('cpp_clangd_options', '-compile-commands-dir=' . getcwd() . "/build")
 
 function! ale_linters#cpp#clangd#GetProjectRoot(buffer) abort
-    let l:project_root = ale#path#FindNearestFile(a:buffer, 'compile_commands.json')
+    let l:project_root = substitute(ale#Var(a:buffer, 'cpp_clangd_options'),
+          \  '-compile-commands-dir=', '', '')
 
     return !empty(l:project_root) ? fnamemodify(l:project_root, ':h') : ''
 endfunction
