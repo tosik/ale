@@ -336,15 +336,11 @@ function! ale#util#GetMatches(lines, patterns) abort
 endfunction
 
 function! s:LoadArgCount(function) abort
-    let l:Function = a:function
-
-    redir => l:output
-        silent! function Function
-    redir END
-
-    if !exists('l:output')
+    try
+        let l:output = execute('function a:function')
+    catch /E123/
         return 0
-    endif
+    endtry
 
     let l:match = matchstr(split(l:output, "\n")[0], '\v\([^)]+\)')[1:-2]
     let l:arg_list = filter(split(l:match, ', '), 'v:val isnot# ''...''')
@@ -477,3 +473,6 @@ function! ale#util#FindItemAtCursor(buffer) abort
     return [l:info, l:loc]
 endfunction
 
+function! ale#util#Input(message, value) abort
+    return input(a:message, a:value)
+endfunction
